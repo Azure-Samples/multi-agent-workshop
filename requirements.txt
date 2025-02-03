@@ -1,0 +1,18 @@
+ipython
+langchain
+python-dotenv
+autogen-agentchat~=0.4.4
+autogen-ext[openai azure]
+flaml[automl]
+mammoth
+markdownify
+python-pptx
+puremagic
+pathvalidate
+pdfminer
+ruff
+yfinance
+matplotlib
+
+
+
