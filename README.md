@@ -18,8 +18,7 @@ You can leverage the Azure Developer CLI, `azd` for short, to deploy the prerequ
 
 For a detailed explanation on what it deploys, check out the README.md in the infra directory.
 
-After the components have been deployed, you can navigate to AI Foundary and obtain the Open AI Key and Endpoint. The Open AI endpoint, as well as the Azure Container Apps endpoint will be stored in the azd environment variables. You can leverage those as well. The Open AI Key is not exposed in this manner for security considerations.
-
+After the components have been deployed, you can navigate to AI Foundry and obtain the Open AI Key and Endpoint. The Open AI endpoint, as well as the Azure Container Apps endpoint will be stored in the azd environment variables. You can leverage those as well. The Open AI Key is not exposed in this manner for security considerations.
 ### Quickstart
 
 #### Environment Variables
