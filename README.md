@@ -13,6 +13,12 @@ This project showcases autogen (0.4) by presenting a set of simple scripts that 
 - dev container option: The project provides a devcontainer configuration that can be used with github codespaces or your own local dev container. So, if you opt for this, you need to have docker in your system
 - venv option: if you have python > 3.8 you could choose to create a venv and install all the requirements there. 
 
+#### Leverage AZD to deploy the prerequisites
+You can leverage the Azure Developer CLI, `azd` for short, to deploy the prerequisites to a subscription. It'll create the resources and export some env vars which you can use to run the exercises. To leverage `azd` you need to have it installed and configured. After that, all it takes is a simple `azd up` and the components will be installed.
+
+For a detailed explanation on what it deploys, check out the README.md in the infra directory.
+
+After the components have been deployed, you can navigate to AI Foundary and obtain the Open AI Key and Endpoint. The Open AI endpoint, as well as the Azure Container Apps endpoint will be stored in the azd environment variables. You can leverage those as well. The Open AI Key is not exposed in this manner for security considerations.
 
 ### Quickstart
 
