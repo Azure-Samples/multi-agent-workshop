@@ -8,25 +8,27 @@ Welcome to the MultiagentHackathon workshop! This project is designed to help yo
 
 ### Prerequisites
 
-- Python 3.9+ installed
-- An Azure OpenAI API key or OpenAI API key (For production ready deployments, you should refrain from using keys, and switch to managed identities)
-- Visual Studio Code
+- [Python](https://www.python.org/) 3.9+ installed
+- An Azure OpenAI API key or OpenAI API key (For production ready deployments, you should refrain from using keys, and switch to [managed identities](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview))
+- [Visual Studio Code](https://code.visualstudio.com/)
 
 ### Installation
 
 1. Open Visual Studio Code (Link in your desktop)
-2. Open a Powershell terminal using the upper menu `Terminal -> New Terminal`
-1. Clone the repository:
+2. Open a Powershell terminal using the upper menu `Terminal -> New Terminal` or by pressing CTRL+SHIFT+` (backtick). Make sure to select the Powershell terminal in the dropdown menu on the top right of the terminal window.
+3. Clone the repository:
+
    ```Powershell
    git clone https://github.com/Azure-Samples/multi-agent-workshop
    cd multi-agent-workshop
    ```
-2. Select open folder in your VS Code and open the `multi-agent-workshop` folder to see the code in your VS Code.
-3. (**Optional, and takes some time**) Open your code in a devcontainer, using the Dev Containers plugin of VS Code and the devcontainer provided in the repo. Once the plugin is installed, if you open the `.devcontainer/devcotainer.json` file, it should ask you to re-open your repo in a devcontainer. 
-4. Install depedencies (might take some minutes):
+
+4. Select open folder in your VS Code and open the `multi-agent-workshop` folder to see the code in your VS Code.
+5. (**Optional, and takes some time**) Open your code in a devcontainer, using the Dev Containers plugin of VS Code and the devcontainer provided in the repo. Once the plugin is installed, if you open the `.devcontainer/devcotainer.json` file, it should ask you to re-open your repo in a devcontainer.
+6. Install depedencies (might take a few minutes):
 
     [uv](https://github.com/astral-sh/uv) is a fast Python package installer and runner. If you haven't installed it yet:
-    
+
     ```Powershell
     powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
     $env:Path = "C:\Users\Admin\.local\bin;env:Path"
@@ -34,18 +36,21 @@ Welcome to the MultiagentHackathon workshop! This project is designed to help yo
     ```
 
     **OR (without using uv)**
+
     ```bash
         python -m venv .venv
     ```
+
     ```powershell
         # On Windows
         .venv\Scripts\activate
     ```
+
     ```bash
         # On macOS/Linux
         source venv/bin/activate
     ```
-    
+
     ```powershell
       curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
       python get-pip.py
@@ -57,28 +62,33 @@ Welcome to the MultiagentHackathon workshop! This project is designed to help yo
     ```
 
 ### Infrastructure Setup
+
 #### Infrastructure as Code (Option 1 - Preferred)
-You can leverage the Azure Developer CLI, `azd` for short, to deploy the prerequisites to a subscription. It'll create the resources and export some env vars which you can use to run the exercises. To leverage `azd` you need to have it installed and configured. After that, all it takes is a simple `azd up` and the components will be installed.
+
+You can leverage the [Azure Developer CLI](https://learn.microsoft.com/azure/developer/azure-developer-cli/), `azd` for short, to deploy the prerequisites to a subscription. It'll create the resources and export some environment variables which you can use to run the exercises. To leverage `azd` you need to have it installed and configured. After that, all it takes is a simple `azd up` and the components will be installed.
 
 To install azd you can execute the following command in Powershell.
+
 ```Powershell
 powershell -ex AllSigned -c "Invoke-RestMethod 'https://aka.ms/install-azd.ps1' | Invoke-Expression"
 ```
 
 If using Linux, you can run:
+
 ```bash
 curl -fsSL https://aka.ms/install-azd.sh | bash
 ```
 
-For a detailed explanation on what it deploys, check out the README.md in the infra directory.
+For a detailed explanation on what it deploys, check out the [README.md in the infra directory](/infra/README.md).
 
-After the components have been deployed, you can navigate to AI Foundry and obtain the Open AI Key and Endpoint. The Open AI endpoint, as well as the Azure Container Apps endpoint will be stored in the azd environment variables. You can leverage those as well. The Open AI Key is not exposed in this manner for security considerations.
+After the components have been deployed, you can navigate to [AI Foundry](https://ai.azure.com/) and obtain the Open AI Key and Endpoint. The Open AI endpoint, as well as the Azure Container Apps endpoint will be stored in the azd environment variables. You can leverage those as well. The Open AI Key is not exposed in this manner for security considerations.
 
 **Restart your VS Code** before running the next commands in the root folder of the repo.
 
 ```Powershell
 azd auth login
 ```
+
 To login follow the instructions and use the credentials for your Azure Subscription from the `Resources` tab
 
 ```Powershell
@@ -88,46 +98,44 @@ azd up
 And follow the instructions in the terminal to name your environment resources, make sure to select the correct subscription. We recommend choosing `Sweden Central` as Location.
 
 #### Azure Portal (Option 2)
+
 1. Navigate to the Azure Portal from the browser of your skillable lab `https://portal.azure.com/#home`
 2. Login using the Username and Password available in the Resources tab
 3. Open a new tab in your browser and go to `https://ai.azure.com` (you should be logged in already)
-4. Create a new project, it should setup for you also a hub.
+4. Create a new project, it should also setup a hub for you.
 ![Project Creation AI Foundry](images/foundry_project.jpeg)
 5. Deploy a GPT-4o model. You can follow the numbered steps in the screenshot below:
-![Create deployment](images/foundry_create_deployment.jpeg) 
-6. Go back to the Azure Portal, and create a Container App Session Pool. The screenshots below can guide you in the process
+![Create deployment](images/foundry_create_deployment.jpeg)
+6. Go back to the Azure Portal, and create a Container App Session Pool. The screenshots below can guide you in the process:
 ![Search Dynamic Pools](images/search_dynamic_pools.jpeg)
-
 
 ![Create Session Pool](images/create_session_pool.jpeg)
 
-
 ![Parameters Session Pool](images/parameters_session_pool.jpeg)
 
-
 ### Configuring your repository
-1. Navigate to the __Azure Portal -> Resource Groups -> YOUR_RESOURCE_GROUP -> openai-YOUR_OWN_SUFFIX -> Explore Azure AI Foundry portal__. Make a note of the endpoint and key, you need then for step 3. 
 
+1. Navigate to the *Azure Portal -> Resource Groups -> YOUR_RESOURCE_GROUP -> openai-YOUR_OWN_SUFFIX -> Explore Azure AI Foundry portal*. Make a note of the endpoint and key, you need then for step 3.  
 The following screenshot show you how to get your credentials:
    ![Azure Portal Credentials](images/get_ai_credentials.jpeg)
 
-2. Navigate to __Azure Portal -> Resource Groups -> YOUR_RESOURCE_GROUP -> aca_pool-YOUR_OWN_SUFFIX__ and get the Pool Management Endpoint.
+2. Navigate to *Azure Portal -> Resource Groups -> YOUR_RESOURCE_GROUP -> aca_pool-YOUR_OWN_SUFFIX* and get the Pool Management Endpoint.
    ![Azure Portal Credentials](images/aca_pool_credentials.jpeg)
 
 3. Set up environment variables:
    - Create a `.env` file in your `exercises` directory.
    - Add your API keys and endpoints (you could get this from the Azure Portal, make sure to have the values between quotes):
-     ```
+
+     ``` commandline
      AZURE_OPENAI_URL=your_azure_endpoint
      AZURE_OPENAI_API_KEY=your_azure_api_key
      ACA_POOL_MANAGEMENT_ENDPOINT=you_ACA_pool_endpoint
      ```
-   
 
 ## Repository Structure
 
-- `src/`: Contains working examples of each exercise. We recommend you to not copy-paste solutions, but only look at this folder when you are stuck with an exercise and need some inspiration.
-- `exercises/`: Contains exercise templates for you to complete
+- [`src/`](/src/): Contains working examples of each exercise. We recommend you to not copy-paste solutions, but only look at this folder when you are stuck with an exercise and need some inspiration.
+- [`exercises/`](/exercises/): Contains exercise templates for you to complete.
 
 ## Getting Started
 
@@ -138,10 +146,12 @@ Start with the first exercise and progress through them sequentially. Each exerc
 ## Exercise 0: Call a model
 
 ### Objective
+
 Learn how to call your LLM model without using agents.
 
 ### Instructions
-Refer to `exercises/00_call_models.py` for a complete example.
+
+Refer to [`exercises/00_call_models.py`](/exercises/00_call_models.py) for a complete example.
 
 ```Powershell
  uv run .\exercises\00_call_models.py
@@ -153,17 +163,19 @@ OR (if you are not using uv)
 python .\exercises/00_call_models.py
 ```
 
-This is a very simple script that only calls the LLM deployed. It should serve as the starting point of the next exercises and should validate the connection to your LLM. If the code runs properly, you should see in the terminal a joke created by the model.
+This is a very simple script that only calls the LLM deployed. It should serve as the starting point of the next exercises and should validate the connection to your LLM. If the code runs properly, you should see a joke created by the model in the terminal.
 
 ===
 
 ## Exercise 1: Single Agent
 
 ### Objective
+
 Learn how to create and interact with a single AI agent.
 
 ### Instructions
-Refer to `exercises/01_single_agent.py` for a complete example.
+
+Refer to [`exercises/01_single_agent.py`](/exercises/01_single_agent.py) for a complete example.
 
 This is the foundation of agent-based systems. Understand how a basic agent system works before proceeding to more complex multi-agent scenarios.
 
@@ -172,10 +184,12 @@ This is the foundation of agent-based systems. Understand how a basic agent syst
 ## Exercise 2: Two Agents
 
 ### Objective
+
 Implement a conversation between two agents (Chandler and Joey) who exchange jokes.
 
 ### Instructions
-1. Open `exercises/02_two_agents.py`
+
+1. Open [`exercises/02_two_agents.py`](/exercises/02_two_agents.py)
 2. Complete the TODOs in the file:
    - Create a `ChatCompletionClient` using the provided `llm_config`
    - Create two `AssistantAgent` instances with appropriate system messages:
@@ -189,6 +203,7 @@ Implement a conversation between two agents (Chandler and Joey) who exchange jok
 3. Documentation is available here: [Autogen Docs](https://microsoft.github.io/autogen/stable/index.html)
 
 ### Expected Outcome
+
 Two agents exchanging jokes in a structured conversation that terminates after a set number of exchanges.
 
 ===
@@ -196,10 +211,12 @@ Two agents exchanging jokes in a structured conversation that terminates after a
 ## Exercise 3: Two Agents Guessing Game
 
 ### Objective
+
 Create a number guessing game where two agents interact: one tries to guess a random number, and the other provides feedback.
 
 ### Instructions
-1. Open `exercises/03_two_agents_guessing_game.py`
+
+1. Open [`exercises/03_two_agents_guessing_game.py`](/exercises/03_two_agents_guessing_game.py)
 2. Complete the TODOs in the file:
    - Create an OpenAI model client using `ChatCompletionClient.load_component()`
    - Create a guesser agent that tries to guess a number between 1-100
@@ -210,6 +227,7 @@ Create a number guessing game where two agents interact: one tries to guess a ra
 3. Documentation is available here: [Autogen Docs](https://microsoft.github.io/autogen/stable/index.html)
 
 ### Expected Outcome
+
 A functional guessing game where agents take turns until the correct number is guessed.
 
 ===
@@ -217,10 +235,12 @@ A functional guessing game where agents take turns until the correct number is g
 ## Exercise 4: Generate and Run Code in Conversations
 
 ### Objective
+
 Build a system with two agents that can write and execute code collaboratively.
 
 ### Instructions
-1. Open `exercises/04_generate_and_run_code_in_conversations.py`
+
+1. Open [`exercises/04_generate_and_run_code_in_conversations.py`](/exercises/04_generate_and_run_code_in_conversations.py)
 2. Complete the TODOs:
    - Create a system message for the code writer agent with specific instructions
    - Set up a local command line executor using `LocalCommandLineCodeExecutor`
@@ -231,17 +251,20 @@ Build a system with two agents that can write and execute code collaboratively.
 3. Documentation is available here: [Autogen Docs](https://microsoft.github.io/autogen/stable/index.html)
 
 ### Expected Outcome
-A system where one agent proposes Python code to calculate the 14th Fibonacci number, and another agent executes it. It is important to note that in this example, the code_executor_agent executes the code locally, can you think about reasons to avoid this?
+
+A system where one agent proposes Python code to calculate the 14th Fibonacci number, and another agent executes it. It is important to note that in this example, the `code_executor_agent` executes the code locally, can you think about reasons to avoid this?
 
 ===
 
 ## Exercise 5: Custom Agents Run Code
 
 ### Objective
+
 Implement custom agents with code execution capabilities using the AutoGen Core framework. You can think of this code as an evolved or more production ready version of the previous exercise, where the agents interact for a longer time to solve a more complex problem. You will notice that the Assistant agent keeps track of the history of the conversation and keep working on the problem until the executor is able to provide the expected output.
 
 ### Instructions
-1. Open `exercises/05_custom_agents_run_code.py`
+
+1. Open [`exercises/05_custom_agents_run_code.py`](/exercises/05_custom_agents_run_code.py)
 2. Complete the TODOs:
    - Initialize chat history with a SystemMessage in the Assistant class
    - Implement message handling logic for the Assistant
@@ -252,17 +275,20 @@ Implement custom agents with code execution capabilities using the AutoGen Core 
 3. Documentation is available here: [Autogen Docs](https://microsoft.github.io/autogen/stable/index.html)
 
 ### Expected Outcome
-A system where an assistant generates code in markdown blocks, and an executor extracts and runs that code. After the code is executed succesfully, you should be able to see the output in the `exercises/generated` folder.
+
+A system where an assistant generates code in markdown blocks, and an executor extracts and runs that code. After the code is executed succesfully, you should be able to see the output in the [`exercises/generated`](/exercises/generated/) folder.
 
 ===
 
 ## Exercise 6: Human in the Loop
 
 ### Objective
+
 Create a human-in-the-loop interaction between an assistant agent and a user proxy agent.
 
 ### Instructions
-1. Open `exercises/06_human_in_the_loop.py`
+
+1. Open [`exercises/06_human_in_the_loop.py`](/exercises/06_human_in_the_loop.py)
 2. Complete the TODOs:
    - Create a `ChatCompletionClient` using the provided LLM configuration
    - Initialize an `AssistantAgent` with the created client
@@ -273,6 +299,7 @@ Create a human-in-the-loop interaction between an assistant agent and a user pro
 3. Documentation is available here: [Autogen Docs](https://microsoft.github.io/autogen/stable/index.html)
 
 ### Expected Outcome
+
 An interactive session where a human can converse with an AI assistant until they approve the results.
 
 ===
@@ -280,10 +307,12 @@ An interactive session where a human can converse with an AI assistant until the
 ## Exercise 7: Functions Invoked by Agents
 
 ### Objective
+
 Implement a function that can be invoked by an agent and configure the agent to use it.
 
 ### Instructions
-1. Open `exercises/07_functions_invoked_by_agents.py`
+
+1. Open [`exercises/07_functions_invoked_by_agents.py`](/exercises/07_functions_invoked_by_agents.py)
 2. Complete the TODOs:
    - Implement the calculator function to perform basic arithmetic operations
    - Initialize the `AssistantAgent` with proper configuration:
@@ -296,6 +325,7 @@ Implement a function that can be invoked by an agent and configure the agent to 
 3. Documentation is available here: [Autogen Docs](https://microsoft.github.io/autogen/stable/index.html)
 
 ### Expected Outcome
+
 An agent that can perform calculations using a custom calculator function when prompted.
 
 ===
@@ -303,9 +333,11 @@ An agent that can perform calculations using a custom calculator function when p
 ## Exercise 8: Generate Run Code in Remote Container on ACA
 
 ### Objective
+
 Learn how to execute code in a remote Azure Container Apps environment for secure and isolated execution.
 
 ### Troubleshooting
+
 This is the first time that you will interact with the ACA Session Pool, thus, you might require to run the following command beforehand:
 
 ```Powershell
@@ -314,8 +346,10 @@ az login
 ```
 
 Also you need to add the `Azure ContainerApps Session Executor` to your ACA Dynamic Pool, use the user that you have in the `Resources` tab.
+
 ### Instructions
-1. Open `exercises/08_generate_run_code_in_remote_container_on_aca_langchain.py`
+
+1. Open [`exercises/08_generate_run_code_in_remote_container_on_aca_langchain.py`](/exercises/08_generate_run_code_in_remote_container_on_aca_langchain.py)
 2. Implement the `RemoteExecutor` class:
    - Initialize parameters for connection to Azure Container Apps
    - Implement the `execute_code_blocks` method to run code in a remote container
@@ -328,6 +362,7 @@ Also you need to add the `Azure ContainerApps Session Executor` to your ACA Dyna
 4. Documentation is available here: [Autogen Docs](https://microsoft.github.io/autogen/stable/index.html); [LangChain](https://api.python.langchain.com/en/latest/tools/langchain_azure_dynamic_sessions.tools.sessions.SessionsPythonREPLTool.html)
 
 ### Expected Outcome
+
 A system that can generate and execute code in a secure, remote container environment.
 
 ===
@@ -335,10 +370,12 @@ A system that can generate and execute code in a secure, remote container enviro
 ## Exercise 9: Group Chat Coding Problem with Semantic Kernel
 
 ### Objective
+
 Set up a group chat between two agents using Semantic Kernel to solve coding problems.
 
 ### Instructions
-1. Open `exercises/09_group_chat_coding_problem_sk.py`
+
+1. Open [`exercises/09_group_chat_coding_problem_sk.py`](/exercises/09_group_chat_coding_problem_sk.py)
 2. Implement the missing functions:
    - `create_code_agent`: Create an agent specialized in executing Python code
      - Configure the Python code interpreter tool
@@ -354,6 +391,7 @@ Set up a group chat between two agents using Semantic Kernel to solve coding pro
 3. Documentation is available here: [Autogen Docs](https://microsoft.github.io/autogen/stable/index.html); [Semantic Kernel](https://learn.microsoft.com/en-us/semantic-kernel/)
 
 ### Expected Outcome
+
 A group chat where agents collaborate to solve coding problems, with one agent generating code and another executing it.
 
 ===
