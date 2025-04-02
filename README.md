@@ -17,7 +17,7 @@ This project showcases autogen (0.4) by presenting a set of simple scripts that 
 
 #### Leverage AZD to deploy the prerequisites
 
-You can leverage the [Azure Developer CLI](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/), `azd` for short, to deploy the prerequisites to a subscription. It'll create the resources and export some environment variables which you can use to run the exercises. To leverage `azd` you need to have it installed and configured. After that, all it takes is a simple `azd up` and the components will be installed.
+You can leverage the [Azure Developer CLI](https://learn.microsoft.com/azure/developer/azure-developer-cli/), `azd` for short, to deploy the prerequisites to a subscription. It'll create the resources and export some environment variables which you can use to run the exercises. To leverage `azd` you need to have it installed and configured. After that, all it takes is a simple `azd up` and the components will be installed.
 
 For a detailed explanation on what it deploys, check out the [README.md in the infra directory](/infra/README.md).
 
