@@ -2,7 +2,7 @@ ipython
 langchain
 python-dotenv
 autogen-agentchat==0.4.4
-autogen-ext[openai azure]
+autogen-ext[openai,azure]
 flaml[automl]
 mammoth
 markdownify
@@ -16,6 +16,3 @@ matplotlib
 langchain-azure-dynamic-sessions==0.2.0
 semantic-kernel==1.24.0
 fastapi[standard]
-
-
-
