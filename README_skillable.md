@@ -31,7 +31,7 @@ Welcome to the MultiagentHackathon workshop! This project is designed to help yo
 
     ```Powershell
     powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-    $env:Path = "C:\Users\Admin\.local\bin;env:Path"
+    $env:Path += ";C:\Users\Admin\.local\bin"
     uv sync
     ```
 
@@ -116,6 +116,9 @@ And follow the instructions in the terminal to name your environment resources, 
 ### Configuring your repository
 
 1. Navigate to the *Azure Portal -> Resource Groups -> YOUR_RESOURCE_GROUP -> openai-YOUR_OWN_SUFFIX -> Explore Azure AI Foundry portal*. Make a note of the endpoint and key, you need then for step 3.  
+
+You can also just go to `ai.azure.com` and in the overview of your project you should be able to see your credentials, similar to the ones visible in the picture below. 
+
 The following screenshot show you how to get your credentials:
    ![Azure Portal Credentials](images/get_ai_credentials.jpeg)
 
@@ -340,12 +343,27 @@ Learn how to execute code in a remote Azure Container Apps environment for secur
 
 This is the first time that you will interact with the ACA Session Pool, thus, you might require to run the following command beforehand:
 
+Open a Windows Powershell terminal as Administrator and run the command below to install the azure cli:
+
+```Powershell
+$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; Remove-Item .\AzureCLI.msi
+```
+In your VS Code, close the current terminal and open a new one to make sure that the PATH is updated, and then run: 
+
 ```Powershell
 az login 
 ## Select your subscription from the list and continue
 ```
+It might be the case that your uv is not on your PATH after killing your current VS Code terminal, if that is the case, run again:
 
+```Powershell
+$env:Path += ";C:\Users\Admin\.local\bin"
+```
 Also you need to add the `Azure ContainerApps Session Executor` to your ACA Dynamic Pool, use the user that you have in the `Resources` tab.
+
+![Add Role 1](images/add_role_1.jpeg)
+![Add Role 2](images/add_role_2.jpeg)
+![Add Role 3](images/add_role_3.jpeg)
 
 ### Instructions
 
