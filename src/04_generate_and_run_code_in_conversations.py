@@ -1,14 +1,16 @@
 import asyncio
+import os
 
 from autogen_agentchat.agents import AssistantAgent, CodeExecutorAgent
 from autogen_agentchat.conditions import TextMentionTermination
 from autogen_agentchat.teams import RoundRobinGroupChat
 from autogen_agentchat.ui import Console
-from autogen_core.models import ChatCompletionClient
+from autogen_ext.models.openai import AzureOpenAIChatCompletionClient
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from autogen_ext.code_executors.local import LocalCommandLineCodeExecutor
 from dotenv import load_dotenv
 
-from settings import generated_directory, llm_config
+from settings import generated_directory
 
 
 async def coding_agents():
@@ -56,9 +58,16 @@ async def coding_agents():
         work_dir=generated_directory,
     )
 
-    # Get the client for chat completion.
-    client = ChatCompletionClient.load_component(llm_config)
-
+    # Get a token credential provider using DefaultAzureCredential
+    credential = DefaultAzureCredential()
+    token_provider = get_bearer_token_provider(credential, "https://cognitiveservices.azure.com/.default")
+    client = AzureOpenAIChatCompletionClient(
+        model="gpt-4o",
+        api_version="2024-06-01",
+        azure_endpoint=os.environ.get("AZURE_OPENAI_URL", ""),
+        azure_ad_token_provider=token_provider,
+    )
+    
     # It is recommended that the CodeExecutorAgent agent uses a Docker container to execute code.
     # This ensures that model-generated code is executed in an isolated environment.
     # But in this example, we will use the LocalCommandLineCodeExecutor for simplicity.

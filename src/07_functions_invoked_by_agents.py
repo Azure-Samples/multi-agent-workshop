@@ -1,13 +1,13 @@
+import os
 import asyncio
 from typing import Annotated, Literal
 
 from autogen_agentchat.agents import AssistantAgent
 from autogen_agentchat.messages import TextMessage
 from autogen_core import CancellationToken
-from autogen_core.models import ChatCompletionClient
+from autogen_ext.models.openai import AzureOpenAIChatCompletionClient
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from dotenv import load_dotenv
-
-from settings import llm_config
 
 OPERATOR = Literal["+", "-", "*", "/"]
 
@@ -39,8 +39,16 @@ async def main() -> None:
     """
 
     load_dotenv()
-    client = ChatCompletionClient.load_component(llm_config)
-
+    # Get a token credential provider using DefaultAzureCredential
+    credential = DefaultAzureCredential()
+    token_provider = get_bearer_token_provider(credential, "https://cognitiveservices.azure.com/.default")
+    client = AzureOpenAIChatCompletionClient(
+        model="gpt-4o",
+        api_version="2024-06-01",
+        azure_endpoint=os.environ.get("AZURE_OPENAI_URL", ""),
+        azure_ad_token_provider=token_provider,
+    )
+    
     assistant = AssistantAgent(
         name="assistant",
         system_message="""You are a helpful assistant. For math operations, you always call your 'calculator' tool,"
