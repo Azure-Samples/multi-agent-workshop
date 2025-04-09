@@ -45,7 +45,8 @@ async def simple_agent():
         CancellationToken(),
     )
 
-    # Agent/s thought process
+    # Agent/s thought process. It gets populated when the agent is thinking, or when using tools.
+    # For this example can be empty
     print(f" Touthg process: {response.inner_messages}")
 
     # Agent/s final response
@@ -60,7 +61,8 @@ async def simple_agent():
         chatbot.on_messages_stream(
             [
                 TextMessage(
-                    content="Tell me another joke, but about fruits.", source="user"
+                    content="Tell me another joke, but about fruits.",
+                    source="user",
                 )
             ],
             cancellation_token=CancellationToken(),

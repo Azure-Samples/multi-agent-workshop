@@ -24,7 +24,7 @@ dependencies=[
     "yfinance",
     "matplotlib",
     "langchain-azure-dynamic-sessions==0.2.0",
-    "semantic-kernel~=1.24.0",
+    "semantic-kernel==1.24.0",
     "fastapi[standard]",
 ]
 

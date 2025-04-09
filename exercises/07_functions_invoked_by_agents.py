@@ -27,6 +27,16 @@ def calculator(
     pass  # Replace this with your implementation
 
 
+def get_time() -> str:
+    """
+    Returns a fixed time as a string.
+
+    Returns:
+        str: A fixed time in the format "HH:MM:SS"
+    """
+    return "12:00:00"
+
+
 async def main() -> None:
     """
     Main function to run the assistant agent.
@@ -50,13 +60,13 @@ async def main() -> None:
     # 1. Give your agent an appropriate name
     # 2. Write a system message that instructs the agent to use the calculator tool
     # 3. Set up the model client
-    # 4. Add the calculator function to the tools list
+    # 4. Add the calculator and get_time functions to the tools list
     # 5. Configure whether the agent should reflect on tool use
     assistant = AssistantAgent(
         name="",  # Choose an appropriate name
         system_message="",  # Write a proper system message
         model_client=client,
-        tools=[],  # Add your calculator function here
+        tools=[],  # Add your calculator function here and also the get_time function
         reflect_on_tool_use=False,  # Decide whether the agent should reflect on tool use
     )
 

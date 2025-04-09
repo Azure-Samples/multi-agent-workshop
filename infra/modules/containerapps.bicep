@@ -13,7 +13,9 @@ param logAnalyticsWorkspaceCustomerId string
 
 @description('Primary shared key of the Log Analytics workspace')
 param logAnalyticsWorkspacePrimarySharedKey string
+param location string = 'swedencentral'
 
+// Create a Container Apps environment
 // Create a Container Apps environment
 resource containerAppsEnv 'Microsoft.App/managedEnvironments@2023-05-01' = {
   name: envName

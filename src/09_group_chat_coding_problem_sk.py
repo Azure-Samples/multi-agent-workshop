@@ -147,7 +147,6 @@ async def main():
     code_agent = await create_code_agent()
     chat_agent = await create_chat_agent()
 
-    # Create an agent group chat with the correct parameters
     group_chat = AgentGroupChat(agents=[chat_agent, code_agent])
 
     # Set up the initial chat history
@@ -164,9 +163,13 @@ async def main():
     print(f"User: {user_question}")
     print("\n--- Starting group chat ---\n")
 
-    await group_chat.add_chat_message(
-        ChatMessageContent(role=AuthorRole.USER, content=user_question)
+    # Create an agent group chat with the correct parameters
+    group_chat = AgentGroupChat(
+        agents=[chat_agent, code_agent], chat_history=chat_history
     )
+    # await group_chat.add_chat_message(
+    #     ChatMessageContent(role=AuthorRole.USER, content=user_question)
+    # )
 
     # Improved message handling - display who's speaking
     async for message in group_chat.invoke():

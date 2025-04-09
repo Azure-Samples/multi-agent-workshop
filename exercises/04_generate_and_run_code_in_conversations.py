@@ -75,5 +75,5 @@ async def coding_agents():
     await Console(stream)
 
 
-# Uncomment to run the exercise
+# TODO Uncomment to run the exercise
 # asyncio.run(coding_agents())

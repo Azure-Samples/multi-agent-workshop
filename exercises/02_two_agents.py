@@ -1,6 +1,14 @@
 import asyncio
 
+from autogen_agentchat.agents import AssistantAgent
+from autogen_agentchat.base import TaskResult
+from autogen_agentchat.conditions import TextMentionTermination
+from autogen_agentchat.teams import RoundRobinGroupChat
+from autogen_core.models import ChatCompletionClient
 from dotenv import load_dotenv
+
+from settings import llm_config
+
 
 
 async def team_2_agents():
@@ -18,7 +26,7 @@ async def team_2_agents():
     Refer to the instructions in the comments for each step.
     """
 
-    # TODO: Load environment variables
+    # Load environment variables
     load_dotenv()
 
     # TODO: Create a ChatCompletionClient using the provided llm_config

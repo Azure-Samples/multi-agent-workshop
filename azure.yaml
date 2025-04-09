@@ -1,3 +1,9 @@
 name: multi-agent-workshop
 requiredVersions:
   azd: ">= 1.10.0"
+hooks:
+  preprovision:
+    shell: pwsh
+    run: ./infra/azdhooks/preprovision.ps1
+    continueOnError: false
+    interactive: true

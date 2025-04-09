@@ -11,8 +11,6 @@ from dotenv import load_dotenv
 from settings import llm_config
 
 
-
-
 async def team_2_agents_guessing_game():
     """	
     EXERCISE: Complete the guessing game between two agents
@@ -54,7 +52,7 @@ async def team_2_agents_guessing_game():
     # The team should use the termination condition defined above
     team = None  # Replace this with your RoundRobinGroupChat implementation
 
-    # This code runs the team chat - uncomment when you're ready to test
+    # TODO This code runs the team chat - uncomment when you're ready to test
     # async for message in team.run_stream(
     #     task="I have a number between 1-100 in my mind"
     # ):  # type: ignore
@@ -64,5 +62,5 @@ async def team_2_agents_guessing_game():
     #         print(message)
 
 
-# Uncomment this line to run your solution
+# This line will run your solution
 asyncio.run(team_2_agents_guessing_game())

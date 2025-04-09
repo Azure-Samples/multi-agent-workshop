@@ -26,6 +26,7 @@ from autogen_ext.code_executors.local import LocalCommandLineCodeExecutor
 from dotenv import load_dotenv
 
 from settings import generated_directory, llm_config
+
 @dataclass
 class Message:
     content: str
@@ -42,6 +43,7 @@ class Assistant(RoutedAgent):
         # - Write Python script in markdown blocks for execution
         # - Save figures to files rather than using plt.show()
         # - Include all required code within a single response
+        # - Fallback to generating synthetic data if yfinance cannot pull the data
         self._chat_history: List[LLMMessage] = [
             # Your code here - create a SystemMessage with appropriate instructions
         ]

@@ -44,7 +44,8 @@ class Assistant(RoutedAgent):
             SystemMessage(
                 content="""Write Python script in markdown block, and it will be executed.
                         Always save figures to file in the current directory. Do not use plt.show().
-                        All code required to complete this task must be contained within a single response.""",
+                        All code required to complete this task must be contained within a single response.
+                        If the data cannot be pulled from yfinance, generate synthetic data for the stocks""",
             )
         ]
 

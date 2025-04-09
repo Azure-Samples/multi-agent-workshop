@@ -27,6 +27,16 @@ def calculator(
         raise ValueError("Invalid operator")
 
 
+def get_time() -> str:
+    """
+    Returns a fixed time as a string.
+
+    Returns:
+        str: A fixed time in the format "HH:MM:SS"
+    """
+    return "12:00:00"
+
+
 async def main() -> None:
     """
     Main function to run the assistant agent.
@@ -54,7 +64,7 @@ async def main() -> None:
         system_message="""You are a helpful assistant. For math operations, you always call your 'calculator' tool,"
         "and to get current time, you call the 'get_time' tool. You cant chat about anything else.""",
         model_client=client,
-        tools=[calculator],
+        tools=[calculator, get_time],
         reflect_on_tool_use=False,  # Set to True to have the model reflect on the tool use, set to False to return the tool call result directly.
     )
     while True:
