@@ -8,21 +8,11 @@ param envName string
 @description('Name of the Container Apps managed pool')
 param poolName string
 
-// Create a Log Analytics workspace for the Container Apps environment
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
-  name: '${envName}-logs'
-  location: 'swedencentral'
-  tags: tags
-  properties: {
-    sku: {
-      name: 'PerGB2018'
-    }
-    retentionInDays: 30
-    features: {
-      enableLogAccessUsingOnlyResourcePermissions: true
-    }
-  }
-}
+@description('Customer ID of the Log Analytics workspace')
+param logAnalyticsWorkspaceCustomerId string
+
+@description('Primary shared key of the Log Analytics workspace')
+param logAnalyticsWorkspacePrimarySharedKey string
 
 // Create a Container Apps environment
 resource containerAppsEnv 'Microsoft.App/managedEnvironments@2023-05-01' = {
@@ -33,8 +23,8 @@ resource containerAppsEnv 'Microsoft.App/managedEnvironments@2023-05-01' = {
     appLogsConfiguration: {
       destination: 'log-analytics'
       logAnalyticsConfiguration: {
-        customerId: logAnalyticsWorkspace.properties.customerId
-        sharedKey: logAnalyticsWorkspace.listKeys().primarySharedKey
+        customerId: logAnalyticsWorkspaceCustomerId
+        sharedKey: logAnalyticsWorkspacePrimarySharedKey
       }
     }
   }
