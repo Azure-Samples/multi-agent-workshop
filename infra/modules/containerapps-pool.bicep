@@ -1,4 +1,3 @@
-
 @description('Tags to apply to resources')
 param tags object
 
@@ -8,25 +7,16 @@ param envName string
 @description('Name of the Container Apps managed pool')
 param poolName string
 
-param location string = 'swedencentral'
+@description('Customer ID of the Log Analytics workspace')
+param logAnalyticsWorkspaceCustomerId string
 
-@description('My principal name')
-param myPrincipalId string
-// Create a Log Analytics workspace for the Container Apps environment
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
-  name: '${envName}-logs'
-  location: 'swedencentral'
-  tags: tags
-  properties: {
-    sku: {
-      name: 'PerGB2018'
-    }
-    retentionInDays: 30
-    features: {
-      enableLogAccessUsingOnlyResourcePermissions: true
-    }
-  }
-}
+@description('Primary shared key of the Log Analytics workspace')
+param logAnalyticsWorkspacePrimarySharedKey string
+
+@description('User ID who should be assigned roles')
+param userObjectId string
+
+param location string = 'swedencentral'
 
 // Create a Container Apps environment
 resource containerAppsEnv 'Microsoft.App/managedEnvironments@2023-05-01' = {
@@ -37,8 +27,8 @@ resource containerAppsEnv 'Microsoft.App/managedEnvironments@2023-05-01' = {
     appLogsConfiguration: {
       destination: 'log-analytics'
       logAnalyticsConfiguration: {
-        customerId: logAnalyticsWorkspace.properties.customerId
-        sharedKey: logAnalyticsWorkspace.listKeys().primarySharedKey
+        customerId: logAnalyticsWorkspaceCustomerId
+        sharedKey: logAnalyticsWorkspacePrimarySharedKey
       }
     }
   }
@@ -66,18 +56,24 @@ resource containerAppsManagedPool 'Microsoft.App/sessionPools@2024-02-02-preview
   }
 }
 
-
-// Role definition ID for Azure ContainerApps Session Executor
-var containerAppSessionExecutorRoleId = '0fb8eba5-a2bb-4abe-b1c1-49dfad359bb0' // Using Session User role ID
-
-// Create direct role assignment (no nested module)
-resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(containerAppsManagedPool.id, myPrincipalId, containerAppSessionExecutorRoleId)
+// Role assignments for the user
+resource contributorRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(containerAppsManagedPool.id, userObjectId, 'Contributor')
   scope: containerAppsManagedPool
   properties: {
-    roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', containerAppSessionExecutorRoleId)
-    principalId: myPrincipalId
-    principalType: 'User'  // Change to 'ServicePrincipal' if needed
+    principalId: userObjectId
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c') // Contributor role ID
+    principalType: 'User'
+  }
+}
+
+resource sessionExecutorRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(containerAppsManagedPool.id, userObjectId, 'ContainerApps Session Executor')
+  scope: containerAppsManagedPool
+  properties: {
+    principalId: userObjectId
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '0fb8eba5-a2bb-4abe-b1c1-49dfad359bb0') // ContainerApps Session Executor role ID
+    principalType: 'User'
   }
 }
 

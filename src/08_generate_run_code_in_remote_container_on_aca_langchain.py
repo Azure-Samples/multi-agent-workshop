@@ -15,15 +15,14 @@ from autogen_core import (
 from autogen_core.code_executor import CodeBlock, CodeExecutor, CodeResult
 from autogen_core.models import (
     AssistantMessage,
-    ChatCompletionClient,
     LLMMessage,
     SystemMessage,
     UserMessage,
 )
+from autogen_ext.models.openai import AzureOpenAIChatCompletionClient
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from dotenv import load_dotenv
 from langchain_azure_dynamic_sessions import SessionsPythonREPLTool
-
-from settings import llm_config
 
 
 @dataclass
@@ -64,8 +63,7 @@ class RemoteExecutor(CodeExecutor):
         self.pool_management_endpoint = (
             pool_management_endpoint
             or os.environ.get(
-                "ACA_POOL_MANAGEMENT_ENDPOINT",
-                "<TODO: Set your Azure Container Apps session pool endpoint in environment variables>",
+                "ACA_POOL_MANAGEMENT_ENDPOINT"
             )
         )
 
@@ -145,7 +143,7 @@ def extract_markdown_code_blocks(markdown_text: str) -> List[CodeBlock]:
 
 @default_subscription
 class Assistant(RoutedAgent):
-    def __init__(self, model_client: ChatCompletionClient) -> None:
+    def __init__(self, model_client: AzureOpenAIChatCompletionClient) -> None:
         super().__init__("An assistant agent.")
         self._model_client = model_client
         self._chat_history: List[LLMMessage] = [
@@ -203,17 +201,20 @@ async def run_remote_coding_agents():
     load_dotenv()
     # Create an local embedded runtime.
     runtime = SingleThreadedAgentRuntime()
-    client = ChatCompletionClient.load_component(llm_config)
+    
+    credential = DefaultAzureCredential()
+    token_provider = get_bearer_token_provider(credential, "https://cognitiveservices.azure.com/.default")
+    client = AzureOpenAIChatCompletionClient(
+        model="gpt-4o",
+        api_version="2024-06-01",
+        azure_endpoint=os.environ.get("AZURE_OPENAI_URL", ""),
+        azure_ad_token_provider=token_provider,
+    )
 
     # Create the remote executor with appropriate settings
     executor = RemoteExecutor(
         timeout=60,  # Timeout for each code execution in seconds
         additional_session_config={
-            # Add any additional configuration for the ACA session
-            "api_key": os.environ.get(
-                "ACA_API_KEY",
-                "<TODO: Set your API key in environment variables>",
-            ),
             "session_options": {
                 "keep_alive": True,  # Keep the session alive between code blocks
                 "memory_gb": 4,  # Allocate 4GB of memory to the session

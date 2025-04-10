@@ -1,20 +1,9 @@
 import os
 
 from dotenv import load_dotenv
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
 load_dotenv()
-
-
-
-llm_config = {
-    "provider": "AzureOpenAIChatCompletionClient",
-    "config": {
-        "model": "gpt-4o",
-        "api_key": os.environ.get("AZURE_OPENAI_API_KEY", ""),
-        "azure_endpoint": os.environ.get("AZURE_OPENAI_URL", ""),
-        "api_version": "2024-06-01",
-    },
-}
 
 # llm_websurfer = {
 #     "temperature": 0,
@@ -42,11 +31,6 @@ generated_directory = "./generated"
 #     print("WARNING: Bing API key not found. Some examples won't work.")
 #     print(f"Set the environment variable {bing_api_key_name}")
 #     print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-
-if os.environ.get("AZURE_OPENAI_API_KEY") is None:
-    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-    print("WARNING: Azure OpenAI API key not found. None of the examples will work.")
-    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 
 if os.environ.get("AZURE_OPENAI_URL") is None:
     print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")

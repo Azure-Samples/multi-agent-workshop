@@ -11,8 +11,8 @@
         "environmentName": {
             "value": "${AZURE_ENV_NAME}"
         },
-        "myPrincipalId": {
-            "value": "${MY_USER_ID}"
+        "acrEnabled": {
+            "value": false
         }
     }
 }

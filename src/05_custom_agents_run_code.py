@@ -1,5 +1,6 @@
 # Slightly modified Code from https://github.com/microsoft/autogen/blob/main/python/packages/autogen-core/docs/src/user-guide/core-user-guide/design-patterns/code-execution-groupchat.ipynb
 
+import os
 import asyncio
 import re
 from dataclasses import dataclass
@@ -22,9 +23,11 @@ from autogen_core.models import (
     UserMessage,
 )
 from autogen_ext.code_executors.local import LocalCommandLineCodeExecutor
+from autogen_ext.models.openai import AzureOpenAIChatCompletionClient
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from dotenv import load_dotenv
 
-from settings import generated_directory, llm_config
+from settings import generated_directory
 
 
 @dataclass
@@ -113,7 +116,15 @@ async def coding_agents():
     load_dotenv()
     # Create an local embedded runtime.
     runtime = SingleThreadedAgentRuntime()
-    client = ChatCompletionClient.load_component(llm_config)
+    # Get a token credential provider using DefaultAzureCredential
+    credential = DefaultAzureCredential()
+    token_provider = get_bearer_token_provider(credential, "https://cognitiveservices.azure.com/.default")
+    client = AzureOpenAIChatCompletionClient(
+        model="gpt-4o",
+        api_version="2024-06-01",
+        azure_endpoint=os.environ.get("AZURE_OPENAI_URL", ""),
+        azure_ad_token_provider=token_provider,
+    )
 
     executor = LocalCommandLineCodeExecutor(
         timeout=60,  # Timeout for each code execution in seconds.

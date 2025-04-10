@@ -17,12 +17,26 @@ This project showcases autogen (0.4) by presenting a set of simple scripts that 
 
 #### Leverage AZD to deploy the prerequisites
 
+#### Leverage AZD to deploy the prerequisites
+
+##### Prerequisites
+
+You'll need the following:
+- az cli
+- azd cli
+- Authenticate with az, and obtain your users' object id. This will be input to give you the right permissions on all the resources. You can obtain your users object id by running: `az ad signed-in-user show --query id -o tsv`
+
+##### Using the AZD CLI for starting up the required infrastructure
+
 You can leverage the [Azure Developer CLI](https://learn.microsoft.com/azure/developer/azure-developer-cli/), `azd` for short, to deploy the prerequisites to a subscription. It'll create the resources and export some environment variables which you can use to run the exercises. To leverage `azd` you need to have it installed and configured. After that, all it takes is a simple `azd up` and the components will be installed.
 
 For a detailed explanation on what it deploys, check out the [README.md in the infra directory](/infra/README.md).
 
 After the components have been deployed, you can navigate to [AI Foundry](https://ai.azure.com/) and obtain the Open AI Key and Endpoint. The Open AI endpoint, as well as the Azure Container Apps endpoint, will be stored in the `azd` environment variables. You can leverage those as well. The Open AI Key is not exposed in this manner for security considerations.
 
+For a detailed explanation on what it deploys, check out the README.md in the infra directory.
+
+After the components have been deployed, you can navigate to AI Foundry and obtain the Open AI Key and Endpoint. The Open AI endpoint, as well as the Azure Container Apps endpoint will be stored in the azd environment variables. You can leverage those as well. The Open AI Key is not exposed in this manner for security considerations.
 ### Quickstart
 
 #### Environment Variables

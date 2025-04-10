@@ -3,8 +3,8 @@ targetScope = 'subscription'
 @description('Environment name')
 param environmentName string
 
-@description('My principal name')
-param myPrincipalId string
+@description('User ID who should be the owner of the resources')
+param userObjectId string
 
 var uniqueSuffix = substring(uniqueString(subscription().id, environmentName), 0, 5)
 var tags = {
@@ -15,6 +15,8 @@ var tags = {
 // Resource naming with suffix
 var resourceGroupName = 'rg-${environmentName}-${uniqueSuffix}'
 var openAIName = 'openai-${environmentName}-${uniqueSuffix}'
+var aiHubName = 'ai-hub-${environmentName}-${uniqueSuffix}'
+var aiProjectName = 'ai-project-${environmentName}-${uniqueSuffix}'
 var containerAppsEnvName = 'aca-env-${environmentName}-${uniqueSuffix}'
 var managedPoolName = 'aca-pool-${environmentName}-${uniqueSuffix}'
 
@@ -25,6 +27,16 @@ resource rg 'Microsoft.Resources/resourceGroups@2023-07-01' = {
   tags: tags
 }
 
+module logAnalytics 'modules/log-analytics.bicep' = {
+  scope: rg
+  name: 'logAnalyticsDeploy'
+  params: {
+    tags: tags
+    name: '${rg.name}-la'
+    location: rg.location
+  }
+}
+
 // Deploy the Azure OpenAI service
 module openai 'modules/openai.bicep' = {
   scope: rg
@@ -32,22 +44,92 @@ module openai 'modules/openai.bicep' = {
   params: {
     tags: tags
     openAiName: openAIName
+    userObjectId: userObjectId
   }
 }
 
 // Deploy Azure Container Apps environment and managed pool
-module containerApps 'modules/containerapps.bicep' = {
+module containerAppsPool 'modules/containerapps-pool.bicep' = {
   scope: rg
   name: 'containerAppsDeploy'
   params: {
     tags: tags
     envName: containerAppsEnvName
     poolName: managedPoolName
-    myPrincipalId: myPrincipalId
+    logAnalyticsWorkspaceCustomerId: logAnalytics.outputs.workspaceCustomerId
+    logAnalyticsWorkspacePrimarySharedKey: logAnalytics.outputs.workspacePrimarySharedKey
+    userObjectId: userObjectId
+  }
+}
+
+module appInsights 'modules/app-insights.bicep' = {
+  scope: rg
+  name: 'appInsightsDeploy'
+  params: {
+    tags: tags
+    applicationInsightsName: '${rg.name}-ai'
+    location: rg.location
+  }
+}
+
+module keyvault 'modules/keyvault.bicep' = {
+  scope: rg
+  name: 'keyvaultDeploy'
+  params: {
+    tags: tags
+    keyvaultName: '${rg.name}-kv'
+    location: rg.location
+    userObjectId: userObjectId
+    workspaceId: logAnalytics.outputs.workspaceId
+  }
+}
+
+module storageAccount 'modules/storage.bicep' = {
+  scope: rg
+  name: 'storageAccountDeploy'
+  params: {
+    tags: tags
+    storageName: '${rg.name}sa'
+    location: rg.location
+    userObjectId: userObjectId
+    openAiPrincipalId: openai.outputs.principalId
+  }
+}
+
+module aiHub 'modules/ai-hub.bicep' = {
+  scope: rg
+  name: 'aiHubDeploy'
+  params: {
+    tags: tags
+    location: rg.location
+    aiHubName: aiHubName
+    aiHubFriendlyName: 'AI Hub ${environmentName}'
+    aiHubDescription: 'AI Hub for ${environmentName}'
+    keyVaultId: keyvault.outputs.keyVaultId
+    storageAccountId: storageAccount.outputs.id
+    applicationInsightsId: appInsights.outputs.applicationInsightsID
+    aiServicesEndpoint: openai.outputs.endpoint
+    aiServicesId: openai.outputs.id 
+    userObjectId: userObjectId
+  }
+}
+
+module aiProject 'modules/ai-project.bicep' = {
+  scope: rg
+  name: 'aiProjectDeploy'
+  params: {
+    tags: tags
+    location: rg.location
+    name: aiProjectName
+    friendlyName: 'AI Project for ${environmentName}'
+    hubId: aiHub.outputs.id
+    workspaceId: logAnalytics.outputs.workspaceId
+    userObjectId: userObjectId
+    aiServicesPrincipalId: openai.outputs.principalId
   }
 }
 
 // Outputs
 output AZURE_RESOURCE_GROUP_NAME string = rg.name
-output AZURE_OPENAI_ENDPOINT string = openai.outputs.openAIEndpoint
-output AZURE_CONTAINER_APPS_MANAGED_POOL_ENDPOINT string = containerApps.outputs.managementEndpoint
+output AZURE_OPENAI_ENDPOINT string = openai.outputs.openAiEndpoints
+output AZURE_CONTAINER_APPS_MANAGED_POOL_ENDPOINT string = containerAppsPool.outputs.managementEndpoint

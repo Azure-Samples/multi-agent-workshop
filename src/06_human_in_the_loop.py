@@ -1,14 +1,13 @@
 import asyncio
+import os
 
 from autogen_agentchat.agents import AssistantAgent, UserProxyAgent
 from autogen_agentchat.conditions import TextMentionTermination
 from autogen_agentchat.teams import RoundRobinGroupChat
 from autogen_agentchat.ui import Console
-from autogen_core.models import ChatCompletionClient
+from autogen_ext.models.openai import AzureOpenAIChatCompletionClient
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from dotenv import load_dotenv
-
-from settings import llm_config
-
 
 async def human_in_the_loop():
     """
@@ -33,7 +32,17 @@ async def human_in_the_loop():
 
     # Create the agents.
     load_dotenv()
-    client = ChatCompletionClient.load_component(llm_config)
+    
+    # Get a token credential provider using DefaultAzureCredential
+    credential = DefaultAzureCredential()
+    token_provider = get_bearer_token_provider(credential, "https://cognitiveservices.azure.com/.default")
+    client = AzureOpenAIChatCompletionClient(
+        model="gpt-4o",
+        api_version="2024-06-01",
+        azure_endpoint=os.environ.get("AZURE_OPENAI_URL", ""),
+        azure_ad_token_provider=token_provider,
+    )
+    
     assistant = AssistantAgent("assistant", model_client=client)
     user_proxy = UserProxyAgent(
         "user_proxy", input_func=input
