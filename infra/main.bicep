@@ -49,7 +49,7 @@ module openai 'modules/openai.bicep' = {
 }
 
 // Deploy Azure Container Apps environment and managed pool
-module containerApps 'modules/containerapps.bicep' = {
+module containerAppsPool 'modules/containerapps-pool.bicep' = {
   scope: rg
   name: 'containerAppsDeploy'
   params: {
@@ -58,6 +58,7 @@ module containerApps 'modules/containerapps.bicep' = {
     poolName: managedPoolName
     logAnalyticsWorkspaceCustomerId: logAnalytics.outputs.workspaceCustomerId
     logAnalyticsWorkspacePrimarySharedKey: logAnalytics.outputs.workspacePrimarySharedKey
+    userObjectId: userObjectId
   }
 }
 
@@ -80,16 +81,6 @@ module keyvault 'modules/keyvault.bicep' = {
     location: rg.location
     userObjectId: userObjectId
     workspaceId: logAnalytics.outputs.workspaceId
-  }
-}
-
-module containerRegistry 'modules/container-registry.bicep' = {
-  scope: rg
-  name: 'containerRegistryDeploy'
-  params: {
-    tags: tags
-    containerRegistryName: '${rg.name}acr'
-    location: rg.location
   }
 }
 
@@ -117,7 +108,6 @@ module aiHub 'modules/ai-hub.bicep' = {
     keyVaultId: keyvault.outputs.keyVaultId
     storageAccountId: storageAccount.outputs.id
     applicationInsightsId: appInsights.outputs.applicationInsightsID
-    containerRegistryId: containerRegistry.outputs.containerRegistryId
     aiServicesEndpoint: openai.outputs.endpoint
     aiServicesId: openai.outputs.id 
     userObjectId: userObjectId
@@ -142,4 +132,4 @@ module aiProject 'modules/ai-project.bicep' = {
 // Outputs
 output AZURE_RESOURCE_GROUP_NAME string = rg.name
 output AZURE_OPENAI_ENDPOINT string = openai.outputs.openAiEndpoints
-output AZURE_CONTAINER_APPS_MANAGED_POOL_ENDPOINT string = containerApps.outputs.managementEndpoint
+output AZURE_CONTAINER_APPS_MANAGED_POOL_ENDPOINT string = containerAppsPool.outputs.managementEndpoint

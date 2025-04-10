@@ -19,9 +19,6 @@ param aiHubDescription string
 @description('Resource ID of the application insights resource for storing diagnostics logs')
 param applicationInsightsId string
 
-@description('Resource ID of the container registry resource for storing docker images')
-param containerRegistryId string
-
 @description('Resource ID of the key vault resource for storing connection strings')
 param keyVaultId string
 
@@ -55,7 +52,6 @@ resource aiHub 'Microsoft.MachineLearningServices/workspaces@2025-01-01-preview'
     keyVault: keyVaultId
     storageAccount: storageAccountId
     applicationInsights: applicationInsightsId
-    containerRegistry: containerRegistryId
   }
 
   resource aiServicesConnection 'connections@2024-01-01-preview' = {
