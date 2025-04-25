@@ -6,8 +6,7 @@ import os
 
 import dotenv
 from azure.core.exceptions import ClientAuthenticationError
-from azure.identity import DefaultAzureCredential
-from semantic_kernel.agents import AgentGroupChat, ChatCompletionAgent
+from semantic_kernel.agents import ChatCompletionAgent, AgentGroupChat
 from semantic_kernel.agents.agent import Agent
 from semantic_kernel.agents.group_chat.agent_group_chat import AgentGroupChat
 from semantic_kernel.connectors.ai.open_ai.services.azure_chat_completion import (
@@ -25,8 +24,8 @@ from semantic_kernel.exceptions.function_exceptions import (
     FunctionExecutionException,
 )
 from semantic_kernel.kernel import Kernel
-
-from settings import llm_config
+from autogen_ext.models.openai import AzureOpenAIChatCompletionClient
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
 dotenv.load_dotenv()
 
@@ -62,19 +61,18 @@ def auth_callback_factory(scope):
 
 def setup_chat_service(kernel: Kernel, service_id: str) -> None:
     """Set up a chat completion service for the kernel."""
-    deployment_name = llm_config.get("config", {}).get("model", "gpt-4o")
-    endpoint = llm_config.get("config", {}).get(
-        "azure_endpoint", azure_openai_endpoint
-    )
-    api_key = llm_config.get("config", {}).get("api_key", None)
-    api_version = llm_config.get("config", {}).get("api_version", "2024-06-01")
+    deployment_name = "gpt-4o"
+    endpoint = os.environ.get("AZURE_OPENAI_URL", "")
+    api_version = "2024-06-01"
+    credential = DefaultAzureCredential()
+    token_provider = get_bearer_token_provider(credential, "https://cognitiveservices.azure.com/.default")
 
     chat_service = AzureChatCompletion(
         service_id=service_id,
         endpoint=endpoint,
-        api_key=api_key,
         api_version=api_version,
         deployment_name=deployment_name,
+        ad_token_provider=token_provider,
     )
     kernel.add_service(chat_service)
 

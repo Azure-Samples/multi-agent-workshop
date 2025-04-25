@@ -1,15 +1,14 @@
 import asyncio
+import os
 from time import sleep
 
 from autogen_agentchat.agents import AssistantAgent
 from autogen_agentchat.messages import TextMessage
 from autogen_agentchat.ui import Console
 from autogen_core import CancellationToken
-from autogen_core.models import ChatCompletionClient
+from autogen_ext.models.openai import AzureOpenAIChatCompletionClient
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from dotenv import load_dotenv
-
-from settings import llm_config
-
 
 async def simple_agent():
     """
@@ -23,15 +22,16 @@ async def simple_agent():
 
     load_dotenv()
 
-    # Alternative way to initialize the model client
-    # client = AzureOpenAIChatCompletionClient(
-    #     model="gpt-4o",
-    #     api_version="2024-06-01",
-    #     azure_endpoint=os.environ.get("AZURE_OPENAI_URL", ""),
-    #     api_key=os.environ.get("AZURE_OPENAI_API_KEY", ""),
-    # )
+    # Get a token credential provider using DefaultAzureCredential
+    credential = DefaultAzureCredential()
+    token_provider = get_bearer_token_provider(credential, "https://cognitiveservices.azure.com/.default")
+    client = AzureOpenAIChatCompletionClient(
+        model="gpt-4o",
+        api_version="2024-06-01",
+        azure_endpoint=os.environ.get("AZURE_OPENAI_URL", ""),
+        azure_ad_token_provider=token_provider,
+    )
 
-    client = ChatCompletionClient.load_component(llm_config)
     chatbot = AssistantAgent(
         name="chatbot",
         description="A test chatbot.",
