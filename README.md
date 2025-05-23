@@ -1,4 +1,3 @@
-
 # Multi-Agents with Autogen and Semantic Kernel
 
 This project showcases autogen (0.4) by presenting a set of simple scripts that create different type of agents and interactions between them with the purpose of highlighting the main capabilities of the agentic framework. This repo is based on [https://github.com/krishsub/MultiagentHackathon](https://github.com/krishsub/MultiagentHackathon).
@@ -567,6 +566,34 @@ Set up a group chat between two agents using Semantic Kernel to solve coding pro
 ### Expected Outcome
 
 A group chat where agents collaborate to solve coding problems, with one agent generating code and another executing it.
+
+===
+
+## Exercise 10: Restaurant Booking with MCP Plugins
+
+### Objective
+
+Create a restaurant booking system using Semantic Kernel with Model Context Protocol (MCP) plugins integration. Learn how to create and manage specialized plugins for menu handling and restaurant booking.
+
+### Instructions
+
+1. Open [`exercises/10_agent_to_mcp.py`](/exercises/10_agent_to_mcp.py)
+2. Complete the TODOs in the `main` function:
+   - Initialize the Kernel and Chat Service
+   - Set up the Menu Plugin using MCPStdioPlugin
+   - Set up the Booking Plugin using MCPStdioPlugin
+   - Create the Chat Completion Agent with appropriate plugins
+   - Implement the conversation loop
+   - Handle proper cleanup of resources
+3. Documentation is available here: [Semantic Kernel](https://learn.microsoft.com/en-us/semantic-kernel/), [MCP Plugins](https://learn.microsoft.com/en-us/semantic-kernel/agents/plugins/model-context-protocol)
+
+### Expected Outcome
+
+An interactive restaurant booking system where users can:
+- Query available restaurants
+- Check menu specials and prices
+- Make restaurant reservations
+- Receive booking confirmations or alternative suggestions
 
 ===
 
