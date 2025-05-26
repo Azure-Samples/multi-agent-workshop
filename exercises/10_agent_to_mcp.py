@@ -3,7 +3,7 @@
 Restaurant Booking Agent with MCP Integration - Exercise
 
 This is an exercise file where you'll implement a restaurant booking system
-using Semantic Kernel and MCP (Microsoft Cognitive Platform) plugins.
+using Semantic Kernel and MCP (Model Context Protocol) plugins.
 
 The system should:
 - Handle restaurant menu queries

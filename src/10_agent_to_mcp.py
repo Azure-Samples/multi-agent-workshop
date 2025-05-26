@@ -5,7 +5,7 @@ Restaurant Booking Agent with MCP Integration
 
 This script demonstrates how to create and interact with a conversational AI agent
 that helps users find restaurants, check menus, and make reservations. The agent
-leverages Microsoft Cognitive Platform (MCP) plugins to provide specialized functionality.
+leverages Model Context Protocol (MCP) plugins to provide specialized functionality.
 
 The script sets up a Semantic Kernel-based agent with two MCP-based plugins:
 1. Menu Plugin - Provides information about restaurant menus and specials
