@@ -43,3 +43,25 @@ The deployment provides several important outputs including:
 - Container Apps managed pool management endpoint as AZURE_CONTAINER_APPS_MANAGED_POOL_ENDPOINT
 
 These outputs can be used by other parts of the system to interact with the deployed resources.
+
+## Deployment Instructions
+
+To deploy the infrastructure, follow these steps:
+1. Ensure you have the Azure CLI installed and logged in to your Azure account.
+2. Navigate to the `infra` directory in your terminal.
+3. Get your user principalId using the command:
+4. 
+   ```bash
+   export MY_USER_ID=$(az ad signed-in-user show --query objectId -o tsv)
+   ```
+5. Set your Azure location (e.g., 'swedencentral'):
+   ```bash
+   export AZURE_LOCATION='swedencentral'
+   ```
+6. Deploy the Bicep file using the following command:
+
+   ```bash
+   azd up
+    ```
+
+Note that you may need to purge deleted resources if you encounter quota limits on "Tokens Per Minute (thousands) - gpt-4o". You can use the "Manage deleted resources" option in the Azure portal (Azure OpenAI services) to do this.

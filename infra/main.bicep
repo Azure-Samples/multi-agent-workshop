@@ -6,6 +6,10 @@ param environmentName string
 @description('My principal name')
 param myPrincipalId string
 
+@description('My location')
+param location string = 'swedencentral'
+
+
 var uniqueSuffix = substring(uniqueString(subscription().id, environmentName), 0, 5)
 var tags = {
   application: 'Multi-Agent Workshop'
@@ -21,7 +25,7 @@ var managedPoolName = 'aca-pool-${environmentName}-${uniqueSuffix}'
 // Create the resource group
 resource rg 'Microsoft.Resources/resourceGroups@2023-07-01' = {
   name: resourceGroupName
-  location: 'swedencentral'
+  location: location
   tags: tags
 }
 
