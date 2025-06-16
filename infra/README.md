@@ -52,7 +52,7 @@ To deploy the infrastructure, follow these steps:
 3. Get your user principalId using the command:
 4. 
    ```bash
-   export MY_USER_ID=$(az ad signed-in-user show --query objectId -o tsv)
+   export MY_USER_ID=$(az ad signed-in-user show --query id -o tsv)
    ```
 5. Set your Azure location (e.g., 'swedencentral'):
    ```bash
@@ -61,6 +61,7 @@ To deploy the infrastructure, follow these steps:
 6. Deploy the Bicep file using the following command:
 
    ```bash
+   azd env new multi
    azd up
     ```
 
