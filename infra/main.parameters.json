@@ -13,6 +13,9 @@
         },
         "myPrincipalId": {
             "value": "${MY_USER_ID}"
+        },
+        "location": {
+            "value": "${AZURE_LOCATION}"
         }
     }
 }
