@@ -31,7 +31,7 @@ Create a `.env` file with your Azure OpenAI credentials in the `src` folder:
 
 ```bash
 AZURE_OPENAI_API_KEY=your_api_key
-AZURE_OPENAI_ENDPOINT=your_endpoint
+AZURE_OPENAI_URL=your_endpoint
 ```
 
 #### Installation
