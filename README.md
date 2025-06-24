@@ -349,20 +349,18 @@ Implement a conversation between two agents (Chandler and Joey) who exchange jok
 
 1. Open [`exercises/02_two_agents.py`](/exercises/02_two_agents.py)
 2. Complete the TODOs in the file:
-   - Create a `ChatCompletionClient` using the provided `llm_config`
-   - Create two `AssistantAgent` instances with appropriate system messages:
+   - Use the `AzureChatCompletion` defined in the provided `setting.py`
+   - Create two `ChatCompletionAgent` instances with appropriate system messages:
      - Chandler should tell short story jokes related to friends
      - Joey should respond to jokes with another joke
-     - Both should be able to end the conversation after 2 jokes by saying 'FINISH'
-   - Create a termination condition using `TextMentionTermination`
-   - Create a `RoundRobinGroupChat` team with both agents
+   - Create a `ConcurrentOrchestration` or `SequentialOrchestration` team with both agents
    - Run the conversation and print the results
    - Reset the team and run another conversation as a stream
-3. Documentation is available here: [Autogen Docs](https://microsoft.github.io/autogen/stable/index.html)
+3. Documentation is available here: [Semantic Kernel Docs](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-orchestration/?pivots=programming-language-python)
 
 ### Expected Outcome
 
-Two agents exchanging jokes in a structured conversation that terminates after a set number of exchanges.
+Two agents exchanging jokes in a structured conversation that terminates after idle time.
 
 ===
 

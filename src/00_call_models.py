@@ -1,12 +1,11 @@
 import asyncio
 
-from autogen_core.models import ChatCompletionClient
-from autogen_core.models import SystemMessage, UserMessage
+from semantic_kernel.connectors.ai.open_ai import (
+    OpenAIChatPromptExecutionSettings,
+)
+from semantic_kernel.contents.chat_history import ChatHistory
 
-
-from dotenv import load_dotenv
-
-from settings import llm_config
+from settings import chat_completion_service_client
 
 
 async def main():
@@ -21,21 +20,16 @@ async def main():
         None
     """
 
-    load_dotenv()
+    history = ChatHistory()
+    user_input = "Tell me a short story joke about a cat and a dog."
 
-    # Alternative way to initialize the model client
-    # client = AzureOpenAIChatCompletionClient(
-    #     model="gpt-4o",
-    #     api_version="2024-06-01",
-    #     azure_endpoint=os.environ.get("AZURE_OPENAI_URL", ""),
-    #     api_key=os.environ.get("AZURE_OPENAI_API_KEY", ""),
-    # )
+    history.add_user_message(user_input)
 
-    client = ChatCompletionClient.load_component(llm_config)
-    
-    result = await client.create([SystemMessage(content="You are a comedian specialized in telling short story jokes."), 
-                                  UserMessage(content="Tell me a joke", source="user")])
-    print(result)
+    execution_settings = OpenAIChatPromptExecutionSettings()
+    response = await chat_completion_service_client.get_chat_message_content(
+        history, settings=execution_settings
+    )
+    print(f"Assistant: {response}")
 
 
 asyncio.run(main())
