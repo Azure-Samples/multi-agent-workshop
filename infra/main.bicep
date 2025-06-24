@@ -6,7 +6,7 @@ param environmentName string
 @description('My principal name')
 param myPrincipalId string
 
-@description('My location')
+@description('Azure region for deployment')
 param location string = 'swedencentral'
 
 
