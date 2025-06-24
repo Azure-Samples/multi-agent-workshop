@@ -522,17 +522,12 @@ If you experiment issues when running the code in the container, due to lack of 
 
 ### Instructions
 
-1. Open [`exercises/08_generate_run_code_in_remote_container_on_aca_langchain.py`](/exercises/08_generate_run_code_in_remote_container_on_aca_langchain.py)
+1. Open [`exercises/08_generate_run_code_in_remote_container_on_aca_sk.py`](/exercises/08_generate_run_code_in_remote_container_on_aca_sk.py)
 2. Implement the `RemoteExecutor` class:
    - Initialize parameters for connection to Azure Container Apps
    - Implement the `execute_code_blocks` method to run code in a remote container
-3. Complete the `run_remote_coding_agents` function:
-   - Load environment variables
-   - Set up the agent runtime
-   - Initialize the model client and remote executor
-   - Register the assistant and executor agents
-   - Start the runtime and publish an initial message
-4. Documentation is available here: [Autogen Docs](https://microsoft.github.io/autogen/stable/index.html); [LangChain](https://api.python.langchain.com/en/latest/tools/langchain_azure_dynamic_sessions.tools.sessions.SessionsPythonREPLTool.html)
+3. Complete the `create_code_executor_agent` and `create_assistant_agent` functions:
+4. Documentation is available here: [Semantic Kernel](https://learn.microsoft.com/en-gb/azure/container-apps/sessions-tutorial-semantic-kernel)
 
 ### Expected Outcome
 
