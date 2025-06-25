@@ -3,20 +3,15 @@
 # It uses the Semantic Kernel agent framework instead of AutoGen.
 
 import asyncio
-import os
 from typing import Annotated, Literal
 
 import dotenv
 from semantic_kernel.agents import ChatCompletionAgent, ChatHistoryAgentThread
-from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
 from semantic_kernel.functions import kernel_function
-from semantic_kernel.kernel import Kernel
 
-from settings import llm_config
+import settings
 
 dotenv.load_dotenv()
-
-azure_openai_endpoint = os.getenv("AZURE_OPENAI_URL")
 
 OPERATOR = Literal["+", "-", "*", "/"]
 
@@ -73,25 +68,6 @@ class TimePlugin:
         return "12:00:00"
 
 
-def setup_chat_service(kernel: Kernel, service_id: str) -> None:
-    """Set up a chat completion service for the kernel."""
-    deployment_name = llm_config.get("config", {}).get("model", "gpt-4o")
-    endpoint = llm_config.get("config", {}).get(
-        "azure_endpoint", azure_openai_endpoint
-    )
-    api_key = llm_config.get("config", {}).get("api_key", None)
-    api_version = llm_config.get("config", {}).get("api_version", "2024-06-01")
-
-    chat_service = AzureChatCompletion(
-        service_id=service_id,
-        endpoint=endpoint,
-        api_key=api_key,
-        api_version=api_version,
-        deployment_name=deployment_name,
-    )
-    kernel.add_service(chat_service)
-
-
 async def main():
     """
     Main function to run the assistant agent with Semantic Kernel.
@@ -102,9 +78,9 @@ async def main():
     when the user inputs "exit".
     """
     # Create the kernel and set up the chat service
-    kernel = Kernel()
-    service_id = "math-time-assistant"
-    setup_chat_service(kernel, service_id)
+    kernel = settings.setup_kernel_with_chat_completion_service(
+        service_id="math-time-assistant"
+    )
 
     # Create and register plugins
     calculator_plugin = CalculatorPlugin()

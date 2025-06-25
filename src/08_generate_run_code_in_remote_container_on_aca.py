@@ -14,9 +14,6 @@ from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import DefaultAzureCredential
 from semantic_kernel.agents import AgentGroupChat, ChatCompletionAgent
 from semantic_kernel.agents.agent import Agent
-from semantic_kernel.connectors.ai.open_ai.services.azure_chat_completion import (
-    AzureChatCompletion,
-)
 from semantic_kernel.contents import ChatHistory
 from semantic_kernel.core_plugins.sessions_python_tool.sessions_python_plugin import (
     SessionsPythonTool,
@@ -24,33 +21,12 @@ from semantic_kernel.core_plugins.sessions_python_tool.sessions_python_plugin im
 from semantic_kernel.exceptions.function_exceptions import (
     FunctionExecutionException,
 )
-from semantic_kernel.kernel import Kernel
 
-from settings import llm_config
+import settings
 
 dotenv.load_dotenv()
 
-azure_openai_endpoint = os.getenv("AZURE_OPENAI_URL")
 pool_management_endpoint = os.getenv("ACA_POOL_MANAGEMENT_ENDPOINT")
-
-
-def setup_chat_service(kernel: Kernel, service_id: str) -> None:
-    """Set up a chat completion service for the kernel."""
-    deployment_name = llm_config.get("config", {}).get("model", "gpt-4o")
-    endpoint = llm_config.get("config", {}).get(
-        "azure_endpoint", azure_openai_endpoint
-    )
-    api_key = llm_config.get("config", {}).get("api_key", None)
-    api_version = llm_config.get("config", {}).get("api_version", "2024-06-01")
-
-    chat_service = AzureChatCompletion(
-        service_id=service_id,
-        endpoint=endpoint,
-        api_key=api_key,
-        api_version=api_version,
-        deployment_name=deployment_name,
-    )
-    kernel.add_service(chat_service)
 
 
 def extract_markdown_code_blocks(markdown_text: str) -> List[Dict[str, str]]:
@@ -106,10 +82,7 @@ class RemoteCodeExecutor:
     4. Authentication should be enabled (API key is used in this code)
     """
 
-    def __init__(
-        self,
-        pool_management_endpoint: Optional[str] = None
-    ) -> None:
+    def __init__(self, pool_management_endpoint: Optional[str] = None) -> None:
         """
         Initialize the RemoteCodeExecutor with connection details for Azure Container Apps.
 
@@ -127,7 +100,6 @@ class RemoteCodeExecutor:
                 "<TODO: Set your Azure Container Apps session pool endpoint in environment variables>",
             )
         )
-
 
     async def execute_code_blocks(
         self, code_blocks: List[Dict[str, str]]
@@ -150,7 +122,9 @@ class RemoteCodeExecutor:
 
             sessions_tool = SessionsPythonTool(
                 pool_management_endpoint=self.pool_management_endpoint,
-                auth_callback=auth_callback_factory("https://dynamicsessions.io/.default"),
+                auth_callback=auth_callback_factory(
+                    "https://dynamicsessions.io/.default"
+                ),
                 # You can also pass other parameters like:
                 # env_file_path=".env",  # if you have a custom .env file
                 # token_endpoint="https://your-custom-endpoint.com",  # for custom auth
@@ -207,9 +181,9 @@ async def create_code_executor_agent(
     remote_executor: RemoteCodeExecutor,
 ) -> Agent:
     """Create an agent specialized in executing Python code remotely."""
-    kernel = Kernel()
-    service_id = "remote-code-execution-service"
-    setup_chat_service(kernel, service_id)
+    kernel = settings.setup_kernel_with_chat_completion_service(
+        service_id="remote-code-execution-service"
+    )
 
     # Create agent description
     description = """I am a Remote Code Execution Agent. 
@@ -234,9 +208,9 @@ async def create_code_executor_agent(
 
 async def create_assistant_agent() -> Agent:
     """Create an assistant agent that generates Python code."""
-    kernel = Kernel()
-    service_id = "assistant-service"
-    setup_chat_service(kernel, service_id)
+    kernel = settings.setup_kernel_with_chat_completion_service(
+        service_id="assistant-service"
+    )
 
     # Create agent description
     description = """I am a Python Code Generation Assistant. 
@@ -351,5 +325,4 @@ async def main():
 
 
 if __name__ == "__main__":
-
     asyncio.run(main())

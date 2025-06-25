@@ -6,16 +6,13 @@ import asyncio
 import os
 
 import dotenv
-
 from semantic_kernel.agents.chat_completion.chat_completion_agent import (
     ChatCompletionAgent,
     ChatHistoryAgentThread,
 )
-from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
 from semantic_kernel.connectors.mcp import MCPStdioPlugin
-from semantic_kernel.kernel import Kernel
 
-from settings import llm_config
+import settings
 
 """
 The following sample demonstrates how to create a chat completion agent that
@@ -31,8 +28,6 @@ If this is not set, it will try to use DefaultAzureCredential.
 
 dotenv.load_dotenv()
 
-azure_openai_endpoint = os.getenv("AZURE_OPENAI_URL")
-
 # Simulate a conversation with the agent
 USER_INPUTS = [
     "What are the latest 5 python issues in Microsoft/semantic-kernel?",
@@ -40,30 +35,12 @@ USER_INPUTS = [
 ]
 
 
-def setup_chat_service(kernel: Kernel, service_id: str) -> None:
-    """Set up a chat completion service for the kernel."""
-    deployment_name = llm_config.get("config", {}).get("model", "gpt-4o")
-    endpoint = llm_config.get("config", {}).get(
-        "azure_endpoint", azure_openai_endpoint
-    )
-    api_key = llm_config.get("config", {}).get("api_key", None)
-    api_version = llm_config.get("config", {}).get("api_version", "2024-06-01")
-
-    chat_service = AzureChatCompletion(
-        service_id=service_id,
-        endpoint=endpoint,
-        api_key=api_key,
-        api_version=api_version,
-        deployment_name=deployment_name,
-    )
-    kernel.add_service(chat_service)
-
-
 async def main():
     # 1. Create the agent
-    kernel = Kernel()
-    service_id = "issue-agent"
-    setup_chat_service(kernel, service_id)
+    kernel = settings.setup_kernel_with_chat_completion_service(
+        service_id="issue-agent"
+    )
+
     async with MCPStdioPlugin(
         name="Github",
         description="Github Plugin",
