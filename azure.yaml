@@ -7,3 +7,9 @@ hooks:
     run: ./infra/azdhooks/preprovision.ps1
     continueOnError: false
     interactive: true
+variables:
+  - name: location
+    type: string
+    default: swedencentral
+    description: The Azure region to deploy resources in.
+
